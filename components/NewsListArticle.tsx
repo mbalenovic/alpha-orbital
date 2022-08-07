@@ -2,9 +2,26 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 import INewsArticle from "../typescript/INewsArticle";
 
+const Container = styled.div`
+  display: flex;
+  padding: 20px;
+  border: 1px solid white;
+`;
+
 const Flex = styled.div`
   display: flex;
-  border: 1px solid white;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  visibility: hidden;
+`;
+
+const ButtonContainer = styled.div`
+  margin-left: auto;
+  &:hover ${Button} {
+    visibility: visible;
+  }
 `;
 
 const Title = styled.h3`
@@ -21,7 +38,7 @@ const NewsListArticle = ({
   const newsArticleURL = `https://www.alpha-orbital.com/news/${slug}`;
 
   return (
-    <Flex>
+    <Container>
       <a href={newsArticleURL}>
         <Image
           width="200px"
@@ -31,14 +48,19 @@ const NewsListArticle = ({
         />
       </a>
       <div>
-        <a href={newsArticleURL}>
-          <Title>{title}</Title>
-        </a>
+        <Flex>
+          <a href={newsArticleURL}>
+            <Title>{title}</Title>
+          </a>
+          <ButtonContainer>
+            <Button onClick={() => console.log("delete")}>Delete</Button>
+          </ButtonContainer>{" "}
+        </Flex>
         <p>{date}</p>
         <p>{excerpt}</p>
         <a href={newsArticleURL}>Full article</a>
       </div>
-    </Flex>
+    </Container>
   );
 };
 
