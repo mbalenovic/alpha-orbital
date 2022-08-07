@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import styled from "@emotion/styled";
 import ICategoryType from "../typescript/ICategoryType";
 import categoryType from "../constants/categoryType";
+import ToggleButton from "./ToggleButton";
 
 const Flex = styled.div`
   display: flex;
@@ -45,6 +46,7 @@ const NewsFilter = ({ filters, activeFilter, setActiveFilter }: IProps) => (
     >
       {categoryType["0"]}
     </NewsFilterItem>
+    <ToggleButton />
   </Flex>
 );
 

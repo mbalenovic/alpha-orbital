@@ -1,19 +1,17 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-
-import getNews from "../fetchers/getNews";
-import useNews from "../queries/useNews";
-import INews from "../typescript/INews";
-
-import styles from "../styles/Home.module.css";
+import { useRouter } from "next/router";
 import NewsFilter from "../components/NewsFilter";
-import getCategorizedNews from "../helpers/getCategorizedNews";
-import ICategoryType from "../typescript/ICategoryType";
 import Container from "../components/Container";
 import NewsList from "../components/NewsList";
 import Search from "../components/Search";
+import useNews from "../queries/useNews";
+import getNews from "../fetchers/getNews";
 import searchCategoryNews from "../helpers/searchWithFuse";
-import { useRouter } from "next/router";
+import getCategorizedNews from "../helpers/getCategorizedNews";
+import INews from "../typescript/INews";
+import ICategoryType from "../typescript/ICategoryType";
+import INewsArticle from "../typescript/INewsArticle";
 
 export const getServerSideProps = async (context) => {
   const initialData = await getNews();
@@ -44,15 +42,31 @@ interface IProps {
 
 const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
   const router = useRouter();
-  const { data = [] } = useNews({ initialData });
+  const [news, setNews] = useState<INews>(initialData);
+  const [enabled, setEnabled] = useState(false);
+
+  const onSuccess = (data: INews) => {
+    setNews(data);
+    setEnabled(false);
+  };
+
+  useNews({ initialData, enabled, onSuccess });
+
   const [activeFilter, setActiveFilter] =
     useState<ICategoryType>(initialCategory);
 
   const [search, setSearch] = useState(initialSearch);
-  const categorizedNews = getCategorizedNews(data);
+  const categorizedNews = getCategorizedNews(news);
   const categories = Object.keys(categorizedNews) as ICategoryType[];
   const categoryNews =
-    activeFilter === "0" ? data : categorizedNews[activeFilter];
+    activeFilter === "0" ? news : categorizedNews[activeFilter];
+
+  const deleteNewsArticle = (newsArticle: INewsArticle) => {
+    const removedArticleNews = news.filter(
+      ({ title }) => newsArticle.title !== title
+    );
+    setNews(removedArticleNews);
+  };
 
   const searchedCategoryNews = searchCategoryNews(search, categoryNews);
 
@@ -64,13 +78,13 @@ const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
   }, [activeFilter, search]);
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Alpha Orbital</title>
         <meta name="description" content="read the latest news" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
+      <main>
         <Container>
           <NewsFilter
             filters={categories}
@@ -78,11 +92,14 @@ const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
             setActiveFilter={setActiveFilter}
           />
           <Search search={search} setSearch={setSearch} />
-          <NewsList news={searchedCategoryNews} />
+          <NewsList
+            news={searchedCategoryNews}
+            deleteNewsArticle={deleteNewsArticle}
+            showRefetch={activeFilter === "0" && news.length < 100}
+            setEnabled={setEnabled}
+          />
         </Container>
       </main>
-
-      <footer className={styles.footer}></footer>
     </div>
   );
 };

@@ -28,13 +28,13 @@ const Title = styled.h3`
   display: inline-block;
 `;
 
-const NewsListArticle = ({
-  slug,
-  post_image,
-  title,
-  date,
-  excerpt,
-}: INewsArticle) => {
+interface IProps {
+  newsArticle: INewsArticle;
+  deleteNewsArticle: (newsArticle: INewsArticle) => void;
+}
+
+const NewsListArticle = ({ deleteNewsArticle, newsArticle }: IProps) => {
+  const { slug, post_image, title, date, excerpt } = newsArticle;
   const newsArticleURL = `https://www.alpha-orbital.com/news/${slug}`;
 
   return (
@@ -53,7 +53,9 @@ const NewsListArticle = ({
             <Title>{title}</Title>
           </a>
           <ButtonContainer>
-            <Button onClick={() => console.log("delete")}>Delete</Button>
+            <Button onClick={() => deleteNewsArticle(newsArticle)}>
+              Delete
+            </Button>
           </ButtonContainer>{" "}
         </Flex>
         <p>{date}</p>
