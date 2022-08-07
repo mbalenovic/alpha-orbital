@@ -3,7 +3,7 @@ import fetcher from "../fetchers/getNews";
 import INews from "../typescript/INews";
 
 interface IOptions {
-  initialData?: INews;
+  initialData: INews;
 }
 
 const useNews = (options: IOptions) =>

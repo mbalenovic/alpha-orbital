@@ -23,14 +23,14 @@ const NewsFilterItem = styled.div<INewsFilterItemProps>`
 `;
 
 interface IProps {
-  filters?: ICategoryType[];
+  filters: ICategoryType[];
   activeFilter?: ICategoryType;
   setActiveFilter: Dispatch<SetStateAction<ICategoryType>>;
 }
 
 const NewsFilter = ({ filters, activeFilter, setActiveFilter }: IProps) => (
   <Flex>
-    {filters?.map((filter) => (
+    {filters.map((filter) => (
       <NewsFilterItem
         onClick={() => setActiveFilter(filter)}
         active={activeFilter === filter}

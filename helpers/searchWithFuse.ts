@@ -6,14 +6,12 @@ const searchCategoryNews = (search: string, categoryNews: INews) => {
     return categoryNews;
   }
 
-  const fuse =
-    categoryNews &&
-    new Fuse(categoryNews, {
-      includeScore: true,
-      keys: ["title", "excerpt"],
-    });
+  const fuse = new Fuse(categoryNews, {
+    includeScore: true,
+    keys: ["title", "excerpt"],
+  });
 
-  return fuse?.search(search).map((searchResult) => searchResult.item);
+  return fuse.search(search).map((searchResult) => searchResult.item);
 };
 
 export default searchCategoryNews;

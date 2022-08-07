@@ -5,7 +5,7 @@ import INews from "../typescript/INews";
 import NewsListArticle from "./NewsListArticle";
 
 interface IProps {
-  news?: INews;
+  news: INews;
 }
 
 const NewsList = ({ news = [] }: IProps) => {
