@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from "react";
 import styled from "@emotion/styled";
 import ICategoryType from "../typescript/ICategoryType";
 import categoryType from "../constants/categoryType";
-import ToggleButton from "./ToggleButton";
 
 const Flex = styled.div`
   display: flex;
@@ -30,24 +29,26 @@ interface IProps {
 }
 
 const NewsFilter = ({ filters, activeFilter, setActiveFilter }: IProps) => (
-  <Flex>
-    {filters.map((filter) => (
+  <>
+    <Flex>
+      {filters.map((filter) => (
+        <NewsFilterItem
+          onClick={() => setActiveFilter(filter)}
+          active={activeFilter === filter}
+          key={filter}
+        >
+          {categoryType[filter]}
+        </NewsFilterItem>
+      ))}
       <NewsFilterItem
-        onClick={() => setActiveFilter(filter)}
-        active={activeFilter === filter}
-        key={filter}
+        onClick={() => setActiveFilter("0")}
+        active={activeFilter === "0"}
       >
-        {categoryType[filter]}
+        {categoryType["0"]}
       </NewsFilterItem>
-    ))}
-    <NewsFilterItem
-      onClick={() => setActiveFilter("0")}
-      active={activeFilter === "0"}
-    >
-      {categoryType["0"]}
-    </NewsFilterItem>
-    <ToggleButton />
-  </Flex>
+    </Flex>
+    <div></div>
+  </>
 );
 
 export default NewsFilter;

@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import styled from "@emotion/styled";
 import NewsFilter from "../components/NewsFilter";
 import Container from "../components/Container";
 import NewsList from "../components/NewsList";
@@ -12,6 +13,11 @@ import getCategorizedNews from "../helpers/getCategorizedNews";
 import INews from "../typescript/INews";
 import ICategoryType from "../typescript/ICategoryType";
 import INewsArticle from "../typescript/INewsArticle";
+import DeleteCategory from "../components/DeleteCategory";
+
+const Flex = styled.div`
+  display: flex;
+`;
 
 export const getServerSideProps = async (context) => {
   const initialData = await getNews();
@@ -68,6 +74,17 @@ const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
     setNews(removedArticleNews);
   };
 
+  const deleteCategoryNews = (category: ICategoryType) => {
+    if (activeFilter === category) {
+      setActiveFilter("0");
+    }
+
+    const removedCategoryNews = news.filter(
+      ({ post_category_id }) => post_category_id !== category
+    );
+    setNews(removedCategoryNews);
+  };
+
   const searchedCategoryNews = searchCategoryNews(search, categoryNews);
 
   useEffect(() => {
@@ -86,10 +103,16 @@ const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
       </Head>
       <main>
         <Container>
-          <NewsFilter
-            filters={categories}
-            activeFilter={activeFilter}
-            setActiveFilter={setActiveFilter}
+          <Flex>
+            <NewsFilter
+              filters={categories}
+              activeFilter={activeFilter}
+              setActiveFilter={setActiveFilter}
+            />
+          </Flex>
+          <DeleteCategory
+            categories={categories}
+            deleteCategoryNews={deleteCategoryNews}
           />
           <Search search={search} setSearch={setSearch} />
           <NewsList

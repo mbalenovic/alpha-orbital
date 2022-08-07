@@ -1,9 +1,13 @@
 import styles from "../styles/ToggleButton.module.css";
 
-const ToggleButton = () => {
+interface IProps {
+  handleClick: () => void;
+}
+
+const ToggleButton = ({ handleClick }: IProps) => {
   return (
     <label className={styles.switch}>
-      <input type="checkbox" />
+      <input type="checkbox" onClick={handleClick} />
       <span className={`${styles.slider} ${styles.round}`}></span>
     </label>
   );
