@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useState } from "react";
+
 import getNews from "../fetchers/getNews";
 import useNews from "../queries/useNews";
 import INews from "../typescript/INews";
@@ -10,6 +11,8 @@ import getCategorizedNews from "../helpers/getCategorizedNews";
 import ICategoryType from "../typescript/ICategoryType";
 import Container from "../components/Container";
 import NewsList from "../components/NewsList";
+import Search from "../components/Search";
+import searchCategoryNews from "../helpers/searchWithFuse";
 
 export const getServerSideProps = async () => {
   const initialData = await getNews();
@@ -26,11 +29,14 @@ interface IProps {
 const Home = ({ initialData }: IProps) => {
   const { data } = useNews({ initialData });
   const [activeFilter, setActiveFilter] = useState<ICategoryType>("0");
+  const [search, setSearch] = useState("");
 
   const categorizedNews = getCategorizedNews(data);
   const categories = Object.keys(categorizedNews) as ICategoryType[];
   const categoryNews =
     activeFilter === "0" ? data : categorizedNews[activeFilter];
+
+  const searchedCategoryNews = searchCategoryNews(search, categoryNews);
 
   return (
     <div className={styles.container}>
@@ -46,7 +52,8 @@ const Home = ({ initialData }: IProps) => {
             activeFilter={activeFilter}
             setActiveFilter={setActiveFilter}
           />
-          <NewsList news={categoryNews} />
+          <Search search={search} setSearch={setSearch} />
+          <NewsList news={searchedCategoryNews} />
         </Container>
       </main>
 

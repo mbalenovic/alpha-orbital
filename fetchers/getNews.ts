@@ -1,14 +1,4 @@
-interface INew {
-  title: string;
-  slug: string;
-  date: string;
-  excerpt: string;
-  post_image: string;
-  post_thumbnail: string;
-  post_category_id: string;
-}
-
-type INews = Array<INew>;
+import INews from "../typescript/INews";
 
 const getNews = async () => {
   const data = await (
