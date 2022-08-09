@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/router";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 const Input = styled.input`
   width: 100%;
@@ -13,12 +14,21 @@ const Search = ({
   search: string;
   setSearch: Dispatch<SetStateAction<string>>;
 }) => {
+  const router = useRouter();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    router.replace({
+      query: { ...router.query, search: e.target.value },
+    });
+  };
+
   return (
     <Input
       type="text"
       placeholder="Search..."
       value={search}
-      onChange={(e) => setSearch(e.target.value)}
+      onChange={handleChange}
     />
   );
 };

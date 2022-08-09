@@ -1,13 +1,34 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import styled from "@emotion/styled";
 import ToggleButton from "./ToggleButton";
 import categoryType from "../constants/categoryType";
 import ICategoryType from "../typescript/ICategoryType";
-import INews from "../typescript/INews";
+
+const Flex = styled.div`
+  display: flex;
+`;
+
+const Center = styled.div`
+  padding: 5px;
+  cursor: pointer;
+`;
+
+const Option = styled(Flex)`
+  padding: 5px;
+`;
 
 const Select = styled.div`
-  background: white;
-  color: black;
+  min-width: 250px;
+  margin-left: 20px;
+  background: field;
+  color: white;
+`;
+
+const Button = styled.button`
+  margin-left: auto;
+  padding: 4px 12px;
+  background: black;
+  cursor: pointer;
 `;
 
 interface IProps {
@@ -19,11 +40,9 @@ const DeleteCategory = ({ categories, deleteCategoryNews }: IProps) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
-  console.log(showMenu, showDropdown);
-
   const toggleShowDropdown = () => {
     if (showDropdown) {
-      toggleShowMenu();
+      setShowMenu(false);
     }
     setShowDropdown((showDropdown) => !showDropdown);
   };
@@ -33,23 +52,25 @@ const DeleteCategory = ({ categories, deleteCategoryNews }: IProps) => {
   };
 
   return (
-    <>
+    <Flex>
       <ToggleButton handleClick={toggleShowDropdown} />
+
+      {/* usually react-select */}
       {showDropdown && (
         <Select role="button" onClick={toggleShowMenu}>
-          <div>Delete category</div>
+          <Center>Delete category</Center>
           {showMenu &&
             categories.map((category) => (
-              <div key={category}>
+              <Option key={category}>
                 <span>{categoryType[category]}</span>
-                <button onClick={() => deleteCategoryNews(category)}>
+                <Button onClick={() => deleteCategoryNews(category)}>
                   Delete
-                </button>
-              </div>
+                </Button>
+              </Option>
             ))}
         </Select>
       )}
-    </>
+    </Flex>
   );
 };
 

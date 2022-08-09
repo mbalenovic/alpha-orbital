@@ -2,24 +2,27 @@ import { Dispatch, SetStateAction } from "react";
 import styled from "@emotion/styled";
 import ICategoryType from "../typescript/ICategoryType";
 import categoryType from "../constants/categoryType";
+import { useRouter } from "next/router";
 
 const Flex = styled.div`
   display: flex;
+  padding: 20px 0;
 `;
 
 interface INewsFilterItemProps {
-  active: boolean;
+  active?: boolean;
 }
 
 const NewsFilterItem = styled.div<INewsFilterItemProps>`
   padding: 5px 10px;
   white-space: nowrap;
   &:hover {
-    color: grey;
+    color: white;
     cursor: pointer;
   }
-  color: ${(props) => (props.active ? "blue" : "unset")};
-  text-decoration: ${(props) => (props.active ? "underline" : "none")}; ;
+  color: ${(props) => (props.active ? "white" : "grey")};
+  font-weight: ${(props) => (props.active ? "500" : "400")};
+  text-transform: ${(props) => (props.active ? "uppercase" : "none")}; ;
 `;
 
 interface IProps {
@@ -28,12 +31,21 @@ interface IProps {
   setActiveFilter: Dispatch<SetStateAction<ICategoryType>>;
 }
 
-const NewsFilter = ({ filters, activeFilter, setActiveFilter }: IProps) => (
-  <>
+const NewsFilter = ({ filters, activeFilter, setActiveFilter }: IProps) => {
+  const router = useRouter();
+
+  const handleClick = (filter: ICategoryType) => {
+    setActiveFilter(filter);
+    router.replace({
+      query: { ...router.query, category: filter },
+    });
+  };
+
+  return (
     <Flex>
       {filters.map((filter) => (
         <NewsFilterItem
-          onClick={() => setActiveFilter(filter)}
+          onClick={() => handleClick(filter)}
           active={activeFilter === filter}
           key={filter}
         >
@@ -41,14 +53,13 @@ const NewsFilter = ({ filters, activeFilter, setActiveFilter }: IProps) => (
         </NewsFilterItem>
       ))}
       <NewsFilterItem
-        onClick={() => setActiveFilter("0")}
+        onClick={() => handleClick("0")}
         active={activeFilter === "0"}
       >
         {categoryType["0"]}
       </NewsFilterItem>
     </Flex>
-    <div></div>
-  </>
-);
+  );
+};
 
 export default NewsFilter;

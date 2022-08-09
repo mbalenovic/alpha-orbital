@@ -1,6 +1,5 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useState } from "react";
 import styled from "@emotion/styled";
 import NewsFilter from "../components/NewsFilter";
 import Container from "../components/Container";
@@ -8,7 +7,7 @@ import NewsList from "../components/NewsList";
 import Search from "../components/Search";
 import useNews from "../queries/useNews";
 import getNews from "../fetchers/getNews";
-import searchCategoryNews from "../helpers/searchWithFuse";
+import searchCategoryNews from "../helpers/searchCategoryNews";
 import getCategorizedNews from "../helpers/getCategorizedNews";
 import INews from "../typescript/INews";
 import ICategoryType from "../typescript/ICategoryType";
@@ -17,9 +16,17 @@ import DeleteCategory from "../components/DeleteCategory";
 
 const Flex = styled.div`
   display: flex;
+  align-items: center;
+  margin-top: 20px;
 `;
 
-export const getServerSideProps = async (context) => {
+const Button = styled.button<{ showRefetch?: boolean }>`
+  margin-left: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+`;
+
+export const getServerSideProps = async (context: any) => {
   const initialData = await getNews();
 
   const categorizedNews = getCategorizedNews(initialData);
@@ -47,7 +54,6 @@ interface IProps {
 }
 
 const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
-  const router = useRouter();
   const [news, setNews] = useState<INews>(initialData);
   const [enabled, setEnabled] = useState(false);
 
@@ -66,33 +72,40 @@ const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
   const categories = Object.keys(categorizedNews) as ICategoryType[];
   const categoryNews =
     activeFilter === "0" ? news : categorizedNews[activeFilter];
+  const showRefetch = activeFilter === "0" && news.length < 100;
 
   const deleteNewsArticle = (newsArticle: INewsArticle) => {
-    const removedArticleNews = news.filter(
-      ({ title }) => newsArticle.title !== title
-    );
-    setNews(removedArticleNews);
+    if (window.confirm("Are you sure?")) {
+      // check if last element of array
+      if (
+        categorizedNews[newsArticle.post_category_id as ICategoryType]
+          .length === 1
+      ) {
+        setActiveFilter("0");
+      }
+
+      const removedArticleNews = news.filter(
+        ({ title }) => newsArticle.title !== title
+      );
+      setNews(removedArticleNews);
+    }
   };
 
   const deleteCategoryNews = (category: ICategoryType) => {
-    if (activeFilter === category) {
-      setActiveFilter("0");
-    }
+    if (window.confirm("Are you sure?")) {
+      if (activeFilter === category) {
+        setActiveFilter("0");
+      }
 
-    const removedCategoryNews = news.filter(
-      ({ post_category_id }) => post_category_id !== category
-    );
-    setNews(removedCategoryNews);
+      // check if last element of array
+      const removedCategoryNews = news.filter(
+        ({ post_category_id }) => post_category_id !== category
+      );
+      setNews(removedCategoryNews);
+    }
   };
 
   const searchedCategoryNews = searchCategoryNews(search, categoryNews);
-
-  useEffect(() => {
-    router.replace({
-      query: { category: activeFilter, search },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeFilter, search]);
 
   return (
     <div>
@@ -103,23 +116,24 @@ const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
       </Head>
       <main>
         <Container>
-          <Flex>
-            <NewsFilter
-              filters={categories}
-              activeFilter={activeFilter}
-              setActiveFilter={setActiveFilter}
-            />
-          </Flex>
+          <NewsFilter
+            filters={categories}
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+          />
           <DeleteCategory
             categories={categories}
             deleteCategoryNews={deleteCategoryNews}
           />
-          <Search search={search} setSearch={setSearch} />
+          <Flex>
+            <Search search={search} setSearch={setSearch} />
+            {showRefetch && (
+              <Button onClick={() => setEnabled(true)}>Refetch</Button>
+            )}
+          </Flex>
           <NewsList
             news={searchedCategoryNews}
             deleteNewsArticle={deleteNewsArticle}
-            showRefetch={activeFilter === "0" && news.length < 100}
-            setEnabled={setEnabled}
           />
         </Container>
       </main>

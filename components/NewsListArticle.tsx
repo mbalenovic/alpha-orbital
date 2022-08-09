@@ -5,7 +5,18 @@ import INewsArticle from "../typescript/INewsArticle";
 const Container = styled.div`
   display: flex;
   padding: 20px;
-  border: 1px solid white;
+  margin-top: 10px;
+`;
+
+const ImageContainer = styled.a`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Info = styled.div`
+  margin-left: 30px;
+  flex-basis: 70%;
 `;
 
 const Flex = styled.div`
@@ -15,6 +26,7 @@ const Flex = styled.div`
 const Button = styled.button`
   padding: 10px 20px;
   visibility: hidden;
+  cursor: pointer;
 `;
 
 const ButtonContainer = styled.div`
@@ -39,15 +51,16 @@ const NewsListArticle = ({ deleteNewsArticle, newsArticle }: IProps) => {
 
   return (
     <Container>
-      <a href={newsArticleURL}>
+      <ImageContainer href={newsArticleURL}>
         <Image
-          width="200px"
-          height="200px"
+          width={200}
+          height={200}
           src={`https://www.alpha-orbital.com/assets/images/post_img/${post_image}`}
-          alt={post_image}
+          alt={title}
         />
-      </a>
-      <div>
+      </ImageContainer>
+
+      <Info>
         <Flex>
           <a href={newsArticleURL}>
             <Title>{title}</Title>
@@ -59,9 +72,9 @@ const NewsListArticle = ({ deleteNewsArticle, newsArticle }: IProps) => {
           </ButtonContainer>{" "}
         </Flex>
         <p>{date}</p>
-        <p>{excerpt}</p>
+        <div dangerouslySetInnerHTML={{ __html: excerpt }} />
         <a href={newsArticleURL}>Full article</a>
-      </div>
+      </Info>
     </Container>
   );
 };
