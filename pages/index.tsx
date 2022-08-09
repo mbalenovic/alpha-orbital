@@ -26,6 +26,13 @@ const Button = styled.button<{ showRefetch?: boolean }>`
   cursor: pointer;
 `;
 
+const Layout = styled.div`
+  height: 100vh;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+`;
+
 export const getServerSideProps = async (context: any) => {
   const initialData = await getNews();
 
@@ -116,25 +123,30 @@ const Home = ({ initialData, initialCategory, initialSearch }: IProps) => {
       </Head>
       <main>
         <Container>
-          <NewsFilter
-            filters={categories}
-            activeFilter={activeFilter}
-            setActiveFilter={setActiveFilter}
-          />
-          <DeleteCategory
-            categories={categories}
-            deleteCategoryNews={deleteCategoryNews}
-          />
-          <Flex>
-            <Search search={search} setSearch={setSearch} />
-            {showRefetch && (
-              <Button onClick={() => setEnabled(true)}>Refetch</Button>
-            )}
-          </Flex>
-          <NewsList
-            news={searchedCategoryNews}
-            deleteNewsArticle={deleteNewsArticle}
-          />
+          <Layout>
+            <div>
+              <NewsFilter
+                filters={categories}
+                activeFilter={activeFilter}
+                setActiveFilter={setActiveFilter}
+              />
+              <DeleteCategory
+                categories={categories}
+                deleteCategoryNews={deleteCategoryNews}
+              />
+              <Flex>
+                <Search search={search} setSearch={setSearch} />
+                {showRefetch && (
+                  <Button onClick={() => setEnabled(true)}>Refetch</Button>
+                )}
+              </Flex>
+            </div>
+            <p>{searchedCategoryNews.length} articles</p>
+            <NewsList
+              news={searchedCategoryNews}
+              deleteNewsArticle={deleteNewsArticle}
+            />
+          </Layout>
         </Container>
       </main>
     </div>
